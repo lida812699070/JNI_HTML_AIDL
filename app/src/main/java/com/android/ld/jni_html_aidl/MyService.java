@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
+import android.util.Log;
+
+import java.util.List;
 
 /**
  * Created by ${lida} on 2017/3/4.
@@ -15,15 +18,13 @@ public class MyService extends Service {
     public IBinder onBind(Intent intent) {
         return new IBookManager.Stub() {
             @Override
-            public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
-                new Thread(new Runnable() {
-                    int i = 0;
+            public List<Book> getBookList() throws RemoteException {
+                return null;
+            }
 
-                    @Override
-                    public void run() {
-
-                    }
-                }).start();
+            @Override
+            public void addBook(Book book) throws RemoteException {
+                Log.e("tag",book.toString());
             }
         };
     }

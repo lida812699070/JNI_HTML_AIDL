@@ -13,15 +13,29 @@
         <activity android:name=".MainActivity">
         </activity>
         <activity android:name=".HtmlActivity">
+        </activity>
+        <activity android:name=".MyAIDLActivity">
+
+        </activity>
+
+        <service
+            android:name=".MyService"
+            android:process=":remote"/>
+
+        <activity
+            android:name=".Main2Activity"
+            android:process=":remote">
+        </activity>
+        <activity android:name=".Main22Activity">
+        </activity>
+        <activity android:name=".messager.MessagerActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MyAIDLActivity">
-        </activity>
-        <service android:name=".MyService"
+        <service android:name=".messager.MessagerService"
             android:process=":remote"/>
     </application>
 
