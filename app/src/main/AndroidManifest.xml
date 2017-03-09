@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.android.ld.jni_html_aidl"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="com.android.ld.jni_html_aidl"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!--自定义权限声明-->
+    <permission
+        android:name="com.xsj.siji.permission.ACCESS_BOOK_SERVICE"
+        android:protectionLevel="normal"/>
+
+    <!--自定义权限使用-->
+    <uses-permission android:name="com.xsj.siji.permission.ACCESS_BOOK_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -15,7 +23,11 @@
         <activity android:name=".HtmlActivity">
         </activity>
         <activity android:name=".MyAIDLActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
 
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
 
         <service
@@ -29,13 +41,11 @@
         <activity android:name=".Main22Activity">
         </activity>
         <activity android:name=".messager.MessagerActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
-        <service android:name=".messager.MessagerService"
+
+        <service
+            android:name=".messager.MessagerService"
             android:process=":remote"/>
     </application>
 
