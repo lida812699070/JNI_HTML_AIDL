@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.IBinder;
+import android.os.Parcel;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.os.SystemClock;
@@ -34,12 +35,7 @@ public class MyService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        //权限的验证
-        int check = checkCallingOrSelfPermission("com.xsj.siji.permission.ACCESS_BOOK_SERVICE");
-        if (check== PackageManager.PERMISSION_DENIED){
-            Log.e("tag","没有权限");
-            return null;
-        }
+
         return new IBookManager.Stub() {
             @Override
             public List<Book> getBookList() throws RemoteException {
@@ -80,6 +76,29 @@ public class MyService extends Service {
                 }
                 Log.e("tag", "size=" + mListenerList.size());*/
             }
+
+            @Override
+            public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
+                // 权限验证
+                int check = checkCallingOrSelfPermission("com.xsj.siji.permission.ACCESS_BOOK_SERVICE");
+                Log.e("tag", "check:" + check);
+                if (check == PackageManager.PERMISSION_DENIED) {
+                    Log.e("tag", "Binder 权限验证失败");
+                    return false;
+                }
+                // 包名验证
+                String packageName = null;
+                String[] packages = getPackageManager().getPackagesForUid(getCallingUid());
+                if (packages != null && packages.length > 0) {
+                    packageName = packages[0];
+                }
+                if (!packageName.startsWith("com.android")) {
+                    Log.e("tag", "包名验证失败");
+                    return false;
+
+                }
+                return super.onTransact(code, data, reply, flags);
+            }
         };
     }
 
@@ -88,28 +107,36 @@ public class MyService extends Service {
     @Override
     public void onCreate() {
         mTimer = new Timer();
+
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 Book newBook = new Book("第" + i + "本书", i);
-                mList.add(newBook);
                 try {
                     onNewBookAdd(newBook);
-                } catch (RemoteException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 i++;
             }
-        }, 0, 5000);
+        }, 2000, 5000);
         super.onCreate();
     }
 
-    private void onNewBookAdd(Book newBook) throws RemoteException {
+    private void onNewBookAdd(Book newBook) {
+        mList.add(newBook);
         int callNumber = mListenerList.beginBroadcast();
         for (int i = 0; i < callNumber; i++) {
-            IBookAddListener broadcastCookie = mListenerList.getBroadcastItem(i);
-            broadcastCookie.OnBookAdd(newBook);
+            IBookAddListener l = mListenerList.getBroadcastItem(i);
+            if (l != null) {
+                try {
+                    l.OnBookAdd(newBook);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+        mListenerList.finishBroadcast();
     }
 
 

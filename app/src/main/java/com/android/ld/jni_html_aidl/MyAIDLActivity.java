@@ -46,7 +46,7 @@ public class MyAIDLActivity extends AppCompatActivity {
             //当服务被中断的时候回调
             Log.e("tag", "name =" + name);
             Log.e("tag", "已中断当前Binder");
-            bindService(new Intent(MyAIDLActivity.this, MyService.class), mConn, BIND_AUTO_CREATE);
+            //bindService(new Intent(MyAIDLActivity.this, MyService.class), mConn, BIND_AUTO_CREATE);
 
         }
     };
